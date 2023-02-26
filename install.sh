@@ -1,6 +1,5 @@
 #!/bin/bash
-# Author: github.com/thelinuxchoice
-# Instagram: @thelinuxchoice
+# Author: @thelinuxchoice
 
 trap 'echo exiting cleanly...; exit 1;' SIGINT SIGTSTP
 
@@ -17,7 +16,7 @@ checkroot
   {
     printf >&2  "\e[1;92mInstalling TOR, please wait...\n\e[0m";
     apt-get update > /dev/null && apt-get -y install tor > /dev/null ||
-    printf "\e[1;91mTor Not installed.\n\e[0m";
+    printf "\e[1;91mTor not installed.\n\e[0m";
   }
 ) & wait $!
 
@@ -25,8 +24,8 @@ checkroot
   {
     printf >&2  "\e[1;92mInstalling cURL, please wait...\n\e[0m";
     apt-get update > /dev/null && apt-get -y install curl > /dev/null ||
-    printf "\e[1;91mCurl Not installed.\n\e[0m";
+    printf "\e[1;91mCurl not installed.\n\e[0m";
   }
 ) & wait $!
 
-printf "\e[1;92mAll Requires are installed!\n\e[0m"
+printf "\e[1;92mAll requirements are installed!\n\e[0m"

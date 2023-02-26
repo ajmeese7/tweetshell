@@ -1,9 +1,6 @@
 # Tweetshell v1.0
 Multi-thread Twitter BruteForcer in Shell Script
 
-## Author: github.com/thelinuxchoice
-## IG: instagram.com/thelinuxchoice
-
 Tweetshell is an Shell Script to perform multi-threaded brute force attack against Twitter, this script can bypass login limiting and it can test infinite number of passwords with a rate of +400 passwords/min using 20 threads.
 
 ![tweet](https://user-images.githubusercontent.com/34893261/38052298-2abf6b28-32a7-11e8-83e6-de7c015b774e.png)
@@ -16,21 +13,21 @@ Tweetshell is an Shell Script to perform multi-threaded brute force attack again
 - Check valid username
 - Check and Install all dependencies
 
-### Usage:
-
-```shell
-git clone https://github.com/thelinuxchoice/tweetshell
-cd tweetshell
-chmod +x tweetshell.sh
-service tor start
-sudo ./tweetshell.sh
-```
-
 ### Install requirements (Curl, Tor):
 
 ```shell
 chmod +x install.sh
 sudo ./install.sh
+```
+
+### Usage:
+
+```shell
+git clone https://github.com/ajmeese7/tweetshell
+cd tweetshell
+chmod +x tweetshell.sh
+sudo service tor start
+sudo ./tweetshell.sh
 ```
 
 ### Kill orphan processes

